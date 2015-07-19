@@ -1,1 +1,1 @@
-cd DisableLocalizedGhostClicking\bin && java DisableLocalizedGhostClicking
+cd DisableLocalizedGhostClicking\bin && start java DisableLocalizedGhostClicking
