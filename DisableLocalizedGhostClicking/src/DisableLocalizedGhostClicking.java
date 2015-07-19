@@ -386,7 +386,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				dispose();
 				c.setVisible(false);
 				c.setVisible(true);
-				JOptionPane.showMessageDialog(null, "One more thing: not every phantom click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nSome ghost clicks may be caused by \"allow mouse or touchpad (not touchscreen) to click in region\"\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
+				JOptionPane.showMessageDialog(null, "One more thing: not every ghost click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nIf you still get ghost clicks, probably your area is too small.\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
 			}
 		});
 		mainPane.add(btnDone);
@@ -420,7 +420,7 @@ class Curtain extends JFrame { //curtain
 	volatile Point wherePressed;
 	Robot robot;
 	BufferedImage im;
-	static final int RADIUS = 10;
+	static final int RADIUS = 50;
 	static final long FPS = 50;
 	volatile int min=100;
 	volatile int max=125;
