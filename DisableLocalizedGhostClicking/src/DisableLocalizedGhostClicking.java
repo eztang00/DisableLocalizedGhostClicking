@@ -1,12 +1,14 @@
 
 
 import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
@@ -24,6 +26,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,11 +35,6 @@ import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * public domain
@@ -238,7 +236,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 	}
 	
 	
-	private JPanel contentPane;
+	private JPanel mainPane;
 	private JSpinner min;
 	private JSpinner max;
 	/**
@@ -246,41 +244,10 @@ public class DisableLocalizedGhostClicking extends JFrame {
 	 */
 	public DisableLocalizedGhostClicking(final Curtain c) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,},
-			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
+		mainPane = new JPanel();
+		getContentPane().add(mainPane);
 		
-		final JButton btnClickHereTo = new JButton("Click here to measure your click duration");
-		btnClickHereTo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		final JButton btnClickHereTo = new JButton("Click/tap here to measure your click/tap duration");
 		btnClickHereTo.addMouseListener(new MouseListener() {
 			long t = 0;
 			@Override
@@ -314,6 +281,34 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				
 			}
 		});
+		mainPane.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JLabel lblCloseThisWindow = new JLabel("<html>Close this window to destroy the program.<br />Or press \"Done\" to hide it.</html>");
+		mainPane.add(lblCloseThisWindow);
+
+		JLabel lbl2 = new JLabel("<html>Once hidden, it can only be closed from task manager (maybe javaw.exe),<br />or maybe by right clicking an icon on taskbar below.</html>");
+		mainPane.add(lbl2);
+		
+		final JCheckBox chckbxConstantlyEnsureOn = new JCheckBox("constantly ensure on front of special windows e.g. taskbar");
+		chckbxConstantlyEnsureOn.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				c.constantToFront = chckbxConstantlyEnsureOn.isSelected();
+			}
+		});
+		mainPane.add(chckbxConstantlyEnsureOn);
+		
+		final JCheckBox chckbxTryMoveMouse = new JCheckBox("try move mouse cursor back where it was before ghost click");
+		if (c.robot==null) {
+			chckbxTryMoveMouse.setEnabled(false);
+		}
+		chckbxTryMoveMouse.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				c.moveBackCursor = chckbxTryMoveMouse.isSelected();
+			}
+		});
+		mainPane.add(chckbxTryMoveMouse);
 		
 		final JCheckBox chckbxAllowMouseOr = new JCheckBox("allow mouse or touchpad (not touchscreen) to click in region");
 		if (c.robot==null) {
@@ -327,37 +322,13 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				max.setEnabled(c.allowMouseTouchpad);
 			}
 		});
-		contentPane.add(chckbxAllowMouseOr, "2, 8");
-		
-		JLabel lblCloseThisWindow = new JLabel("<html>Close this window to destroy the program.<br />Or press \"Done\" to hide it.<br />Once hidden, it can only be closed from task manager (maybe javaw.exe),<br />or maybe by right clicking an icon on taskbar below.</html>");
-		contentPane.add(lblCloseThisWindow, "2, 2");
-		
-		final JCheckBox chckbxConstantlyEnsureOn = new JCheckBox("constantly ensure on front of special windows e.g. taskbar");
-		chckbxConstantlyEnsureOn.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-			c.constantToFront = chckbxConstantlyEnsureOn.isSelected();
-			}
-		});
-		contentPane.add(chckbxConstantlyEnsureOn, "2, 4");
-		
-		final JCheckBox chckbxTryMoveMouse = new JCheckBox("try move mouse cursor back where it was before ghost click");
-		if (c.robot==null) {
-			chckbxTryMoveMouse.setEnabled(false);
-		}
-		chckbxTryMoveMouse.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				c.moveBackCursor = chckbxTryMoveMouse.isSelected();
-			}
-		});
-		contentPane.add(chckbxTryMoveMouse, "2, 6");
+		mainPane.add(chckbxAllowMouseOr);
 		
 		JLabel lblDelayRangeTo = new JLabel("<html>Some touchpads have a very consistent click duration to distinguish their clicks.<br />Click duration to detect mouse or touchpad:</html>");
-		contentPane.add(lblDelayRangeTo, "2, 10");
+		mainPane.add(lblDelayRangeTo);
 		
 		JLabel lblMinAllowedClick = new JLabel("min allowed click duration");
-		contentPane.add(lblMinAllowedClick, "2, 12");
+		mainPane.add(lblMinAllowedClick);
 		
 		min = new JSpinner();
 		min.setEnabled(false);
@@ -367,10 +338,10 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				c.min = (int) min.getValue();
 			}
 		});
-		contentPane.add(min, "2, 14");
+		mainPane.add(min);
 		
 		JLabel lblMaxAllowedClick = new JLabel("max allowed click duration");
-		contentPane.add(lblMaxAllowedClick, "2, 16");
+		mainPane.add(lblMaxAllowedClick);
 		
 		max = new JSpinner();
 		max.setEnabled(false);
@@ -380,8 +351,8 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				c.max = (int) max.getValue();
 			}
 		});
-		contentPane.add(max, "2, 18");
-		contentPane.add(btnClickHereTo, "2, 20");
+		mainPane.add(max);
+		mainPane.add(btnClickHereTo);
 		
 		JButton btnDone = new JButton(new AbstractAction("Done") {
 			public void actionPerformed(ActionEvent e) {
@@ -394,8 +365,10 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				dispose();
 			}
 		});
-		contentPane.add(btnDone, "2, 22");
+		mainPane.add(btnDone);
+		mainPane.setSize(mainPane.getPreferredSize());
 		pack();
+		getContentPane().setLayout(null);
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 		addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
