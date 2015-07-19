@@ -368,7 +368,8 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				g.fillRect(0, 0, screen.width, screen.height);
 				g.dispose();
 				dispose();
-				c.repaint();
+				c.setVisible(false);
+				c.setVisible(true);
 				JOptionPane.showMessageDialog(null, "One more thing: not every phantom click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nIf they still pass through, maybe try disabling a larger area.");
 			}
 		});
