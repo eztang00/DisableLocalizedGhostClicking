@@ -419,6 +419,7 @@ class Curtain extends JFrame { //curtain
 	volatile Point lastUnsure = new Point();
 	volatile long mousePressedTime;
 	volatile boolean mousePressed;
+	volatile Point wherePressed;
 	Robot robot;
 	BufferedImage im;
 	static final int RADIUS = 10;
@@ -463,7 +464,7 @@ class Curtain extends JFrame { //curtain
 				}
 				long l = e.getWhen()-mousePressedTime;
 				Point p = e.getLocationOnScreen();
-				if (l >= min && l <=max) {
+				if (l >= min && l <=max && e.getLocationOnScreen().equals(wherePressed)) {
 					if (lastUnsure.distanceSq(p) < RADIUS*RADIUS) {
 						lastSure = p;
 						setVisible(false);
@@ -475,9 +476,9 @@ class Curtain extends JFrame { //curtain
 							robot.mouseMove(lastSure.x, lastSure.y);
 						}
 					}
+					Point prevLastUnsure = lastUnsure;
+					lastUnsure = p;
 					if (drawArtificalMouseCursor&&moveBackCursor) {
-						Point prevLastUnsure = lastUnsure;
-						lastUnsure = p;
 						repaint(prevLastUnsure.x, prevLastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
 						repaint(lastUnsure.x, lastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
 					}
@@ -492,6 +493,7 @@ class Curtain extends JFrame { //curtain
 			public void mousePressed(MouseEvent e) {
 				mousePressedTime = e.getWhen();
 				mousePressed = true;
+				wherePressed = e.getLocationOnScreen();
 			}
 
 			@Override
@@ -521,7 +523,7 @@ class Curtain extends JFrame { //curtain
 							Curtain.this.toFront();
 						}
 						if (moveBackCursor) {
-							if (mousePressed && System.currentTimeMillis()-mousePressedTime >= 150) { //for ghost draggin
+							if (mousePressed && System.currentTimeMillis()-mousePressedTime >= 150) { //for ghost dragging
 								robot.mouseMove(lastSure.x, lastSure.y);
 								mousePressed = false;
 							} else {
