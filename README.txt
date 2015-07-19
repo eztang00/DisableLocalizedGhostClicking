@@ -6,7 +6,7 @@ My guess is it only works on Windows.
 
 To download from github:
 -go to the page with this README file
--click "Download ZIP" (on the bottom right?)
+-click "Download ZIP" (look to the right?)
 
 To run it:
 -make sure you have java installed
