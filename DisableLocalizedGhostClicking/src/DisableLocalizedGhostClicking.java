@@ -1,0 +1,536 @@
+
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+/**
+ * public domain
+ */
+public class DisableLocalizedGhostClicking extends JFrame {
+
+
+	static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+	static JFrame blockingBackground = new JFrame() {
+		{
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setUndecorated(true);
+			setSize(screen);
+		}
+	};
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					blockingBackground.setVisible(true);
+					step1();
+//					FixGhostClick frame = new FixGhostClick();
+//					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	static void ex(int i) {
+		switch (i) {
+		case JOptionPane.CANCEL_OPTION:
+		case JOptionPane.CLOSED_OPTION:
+			System.exit(0);
+			break;
+		}
+	}
+	static void info(String s) {
+		long l = System.currentTimeMillis()+2000;
+		while (true) {	
+			int i = JOptionPane.showConfirmDialog(null, s, "prompt", JOptionPane.OK_CANCEL_OPTION);
+			if (System.currentTimeMillis() < l) {
+				continue;
+			}
+			switch (i) {
+			case JOptionPane.CANCEL_OPTION:
+			case JOptionPane.CLOSED_OPTION:
+				System.exit(0);
+				break;
+			default: return;
+			}
+		
+		}
+	}
+
+	static void step1() {
+		info("If your computer touchscreen is clicking on its own,\nand always within a certain region, this program tries to fix that.\nIt'll try to disable the touchscreen in those regions. Press enter to continue.");
+		JOptionPane.showMessageDialog(null, "First, we check if partially clickable windows are supported. Click anywhere in the green window when it pops up.");
+		final JFrame partClickable = new JFrame() {
+			{
+				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				setUndecorated(true);
+				setBackground(new Color(0,0,0,0));
+				setSize(screen);
+				addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e) {
+						JOptionPane.showMessageDialog(null, "Partially clickabe windows not supported.");
+						System.exit(0);
+					}
+				});
+			}
+			public void paint(Graphics g) {
+				g.drawRect(0, 0, 10, 10);
+				g.drawRect(screen.width-10, 0, 10, 10);
+				g.drawRect(0, screen.height-10, 10, 10);
+			}
+			
+		};
+		final JFrame f = new JFrame() {
+			{
+				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				setUndecorated(true);
+				setSize(screen);
+				addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e) {
+						dispose();
+						partClickable.dispose();
+						step2();
+					}
+				});
+			}
+			public void paint(Graphics g) {
+				g.setColor(Color.GREEN);
+				g.fillRect(0, 0, screen.width, screen.height);
+			}
+			
+		};
+		partClickable.setVisible(true);
+		f.setVisible(true);
+		f.toFront();
+		partClickable.toFront();
+	}
+	static long timeout;
+	static void step2() {
+		JOptionPane.showMessageDialog(null, "Click or tap the regions on the screen you want to disable.");
+
+		final BufferedImage im = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
+		final JFrame regionFinder = new JFrame() {
+			int r = 10;
+			{
+				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				setUndecorated(true);
+				setSize(screen);
+				MouseAdapter m = new MouseAdapter() {
+					public void mousePressed(MouseEvent e) {
+						Graphics g = im.getGraphics();
+						g.setColor(Color.WHITE);
+						g.fillOval(e.getX()-r, e.getY()-r, 2*r+1, 2*r+1);
+						g.dispose();
+						repaint();
+					}
+					public void mouseDragged(MouseEvent e) {
+						mousePressed(e);
+					}
+				};
+				addMouseListener(m);
+				addMouseMotionListener(m);
+				addKeyListener(new KeyAdapter() {
+					public void keyPressed(KeyEvent e) {
+						switch (e.getKeyCode()) {
+						
+						case KeyEvent.VK_ENTER:
+							dispose();
+							step3(im);
+							break;
+						case KeyEvent.VK_MINUS:
+							r--;
+							break;
+						case KeyEvent.VK_PLUS:
+						case KeyEvent.VK_EQUALS:
+							r++;
+							break;
+						case KeyEvent.VK_DELETE:
+							Graphics2D g = (Graphics2D) im.getGraphics();
+							g.setComposite(AlphaComposite.Clear);
+							g.fillRect(0, 0, screen.width, screen.height);
+							g.dispose();
+							break;
+						case KeyEvent.VK_BACK_SPACE:
+							timeout = System.currentTimeMillis()+5*60*1000;
+							break;
+						}
+					}
+				});
+			}
+			public void paint(Graphics g) {
+				g.setColor(Color.BLACK);
+				g.fillRect(0, 0, screen.width, screen.height);
+				g.drawImage(im, 0, 0, null);
+				g.setColor(Color.YELLOW);
+				g.setXORMode(Color.RED);
+				g.drawString("Press enter when done. Or wait 5 minutes.", screen.width/3, screen.height/3);
+				g.drawString("If dots too big press \"-\" to decrease. Pressing delete clears screen. If short on time, press backspace to reset 5 min.", screen.width/3, screen.height/3+50);
+			}
+		};
+		regionFinder.setVisible(true);
+		timeout = System.currentTimeMillis()+5*60*1000;
+		new Thread() {
+			public void run() {
+				while (true) {
+					long time = timeout-System.currentTimeMillis();
+					if (time>0) {
+						try {
+							Thread.sleep(time);
+						} catch (InterruptedException e) {
+							System.exit(0);
+						}
+					} else {
+						regionFinder.dispose();
+						step3(im);
+						break;
+					}
+				}
+			}
+		}.start();
+	}
+	static void step3(final BufferedImage im) {
+		Curtain c = new Curtain(im);
+		c.setVisible(true);
+		blockingBackground.dispose();
+		new DisableLocalizedGhostClicking(c).setVisible(true);
+	}
+	
+	
+	private JPanel contentPane;
+	private JSpinner min;
+	private JSpinner max;
+	/**
+	 * Create the frame.
+	 */
+	public DisableLocalizedGhostClicking(final Curtain c) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		final JButton btnClickHereTo = new JButton("Click here to measure your click duration");
+		btnClickHereTo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnClickHereTo.addMouseListener(new MouseListener() {
+			long t = 0;
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				btnClickHereTo.setText(""+(e.getWhen()-t));
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				t = e.getWhen();
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		final JCheckBox chckbxAllowMouseOr = new JCheckBox("allow mouse or touchpad (not touchscreen) to click in region");
+		if (c.robot==null) {
+			chckbxAllowMouseOr.setEnabled(false);
+		}
+		chckbxAllowMouseOr.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				c.allowMouseTouchpad = chckbxAllowMouseOr.isSelected();
+				min.setEnabled(c.allowMouseTouchpad);
+				max.setEnabled(c.allowMouseTouchpad);
+			}
+		});
+		contentPane.add(chckbxAllowMouseOr, "2, 8");
+		
+		JLabel lblCloseThisWindow = new JLabel("<html>Close this window to destroy the program.<br />Or press \"Done\" to hide it.<br />Once hidden, it can only be closed from task manager (maybe javaw.exe),<br />or maybe by right clicking an icon on taskbar below.</html>");
+		contentPane.add(lblCloseThisWindow, "2, 2");
+		
+		final JCheckBox chckbxConstantlyEnsureOn = new JCheckBox("constantly ensure on front of special windows e.g. taskbar");
+		chckbxConstantlyEnsureOn.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+			c.constantToFront = chckbxConstantlyEnsureOn.isSelected();
+			}
+		});
+		contentPane.add(chckbxConstantlyEnsureOn, "2, 4");
+		
+		final JCheckBox chckbxTryMoveMouse = new JCheckBox("try move mouse cursor back where it was before ghost click");
+		if (c.robot==null) {
+			chckbxTryMoveMouse.setEnabled(false);
+		}
+		chckbxTryMoveMouse.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				c.moveBackCursor = chckbxTryMoveMouse.isSelected();
+			}
+		});
+		contentPane.add(chckbxTryMoveMouse, "2, 6");
+		
+		JLabel lblDelayRangeTo = new JLabel("<html>Some touchpads have a very consistent click duration to distinguish their clicks.<br />Click duration to detect mouse or touchpad:</html>");
+		contentPane.add(lblDelayRangeTo, "2, 10");
+		
+		JLabel lblMinAllowedClick = new JLabel("min allowed click duration");
+		contentPane.add(lblMinAllowedClick, "2, 12");
+		
+		min = new JSpinner();
+		min.setEnabled(false);
+		min.setValue(c.min);
+		min.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				c.min = (int) min.getValue();
+			}
+		});
+		contentPane.add(min, "2, 14");
+		
+		JLabel lblMaxAllowedClick = new JLabel("max allowed click duration");
+		contentPane.add(lblMaxAllowedClick, "2, 16");
+		
+		max = new JSpinner();
+		max.setEnabled(false);
+		max.setValue(c.max);
+		max.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				c.max = (int) max.getValue();
+			}
+		});
+		contentPane.add(max, "2, 18");
+		contentPane.add(btnClickHereTo, "2, 20");
+		
+		JButton btnDone = new JButton(new AbstractAction("Done") {
+			public void actionPerformed(ActionEvent e) {
+				c.isDone = true;
+				Graphics2D g = (Graphics2D) c.im.getGraphics();
+				g.setComposite(AlphaComposite.SrcIn);
+				g.setColor(new Color(255, 255, 255, 1));
+				g.fillRect(0, 0, screen.width, screen.height);
+				g.dispose();
+				dispose();
+			}
+		});
+		contentPane.add(btnDone, "2, 22");
+		pack();
+		setExtendedState(Frame.MAXIMIZED_BOTH);
+		addMouseMotionListener(new MouseAdapter() {
+			public void mouseDragged(MouseEvent e) {
+				setLocation(e.getLocationOnScreen());
+			}
+		});
+	}
+
+}
+
+/**
+ * public domain
+ */
+class Curtain extends JFrame { //curtain 
+
+
+	/**
+	 * Launch the application.
+	 */
+
+	volatile Point lastSure = new Point();
+	volatile Point lastUnsure = new Point();
+	volatile long mousePressedTime;
+	volatile boolean mousePressed;
+	Robot robot;
+	BufferedImage im;
+	static final int RADIUS = 10;
+	static final long FPS = 50;
+	volatile int min=100;
+	volatile int max=125;
+	volatile boolean constantToFront= false;
+	volatile boolean moveBackCursor= false;
+	volatile boolean allowMouseTouchpad= false;
+	volatile boolean isDone;
+	/**
+	 * Create the frame.
+	 */
+	public Curtain(BufferedImage im) {
+		try {
+			robot = new Robot();
+		} catch (Exception e1) {
+			//no robot
+		}
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(0,0,im.getWidth(),im.getHeight());
+		this.im = im;
+		setUndecorated(true);
+		setBackground(new Color(0, 0, 0, 0));
+		setFocusableWindowState(false);
+		setAlwaysOnTop(true);
+		if (robot==null) {
+			return;
+		}
+		addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (mousePressed = false) {
+					return;
+				}
+				mousePressed = false;
+				if (!allowMouseTouchpad) {
+					if (moveBackCursor) {
+						robot.mouseMove(lastSure.x, lastSure.y);
+					}
+					return;
+				}
+				long l = System.currentTimeMillis()-mousePressedTime;
+				Point p = e.getLocationOnScreen();
+				if (l >= min && l <=max && lastUnsure.distanceSq(lastUnsure=p) < RADIUS*RADIUS) {
+					lastSure = p;
+					setVisible(false);
+					robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+					robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+					setVisible(true);
+				} else {
+					if (moveBackCursor) {
+						robot.mouseMove(lastSure.x, lastSure.y);
+					}
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				mousePressedTime = System.currentTimeMillis();
+				mousePressed = true;
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		new Thread() {
+			public void run() {
+				try {
+					while (true) {
+						Thread.sleep(FPS);
+						if (constantToFront) {
+							Curtain.this.toFront();
+						}
+						if (moveBackCursor) {
+							if (mousePressed && System.currentTimeMillis()-mousePressedTime >= 150) { //for ghost draggin
+								robot.mouseMove(lastSure.x, lastSure.y);
+								mousePressed = false;
+							} else {
+								lastUnsure = MouseInfo.getPointerInfo().getLocation();
+								if (Curtain.this.im.getRGB(lastUnsure.x, lastUnsure.y)==0x00000000 || lastUnsure.distanceSq(lastSure) < RADIUS*RADIUS) {
+									lastSure = lastUnsure;
+								}
+							}
+						}
+						if (isDone && !constantToFront && !moveBackCursor) {
+							break;
+						}
+					}
+				} catch (Exception e) {
+					System.exit(1);
+				}
+			}
+		}.start();
+	}
+	public void paint(Graphics g) {
+		g.drawImage(im, 0, 0, null);
+	}
+}
