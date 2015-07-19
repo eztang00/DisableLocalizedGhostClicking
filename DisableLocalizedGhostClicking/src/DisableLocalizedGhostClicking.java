@@ -64,8 +64,6 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				try {
 					blockingBackground.setVisible(true);
 					step1();
-//					FixGhostClick frame = new FixGhostClick();
-//					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -476,12 +474,7 @@ class Curtain extends JFrame { //curtain
 							robot.mouseMove(lastSure.x, lastSure.y);
 						}
 					}
-					Point prevLastUnsure = lastUnsure;
 					lastUnsure = p;
-					if (drawArtificalMouseCursor&&moveBackCursor) {
-						repaint(prevLastUnsure.x, prevLastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
-						repaint(lastUnsure.x, lastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
-					}
 				} else {
 					if (moveBackCursor) {
 						robot.mouseMove(lastSure.x, lastSure.y);
@@ -527,14 +520,14 @@ class Curtain extends JFrame { //curtain
 								robot.mouseMove(lastSure.x, lastSure.y);
 								mousePressed = false;
 							} else {
-								Point prevLastUnsure = lastUnsure;
 								lastUnsure = MouseInfo.getPointerInfo().getLocation();
 								if (Curtain.this.im.getRGB(lastUnsure.x, lastUnsure.y)==0x00000000 || lastUnsure.distanceSq(lastSure) < RADIUS*RADIUS) {
+									Point prevLastSure = lastSure;
 									lastSure = lastUnsure;
-								}
-								if (drawArtificalMouseCursor&&moveBackCursor) {
-									repaint(prevLastUnsure.x, prevLastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
-									repaint(lastUnsure.x, lastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
+									if (drawArtificalMouseCursor&&moveBackCursor) {
+										repaint(prevLastSure.x, prevLastSure.y, mousePointer.getWidth(), mousePointer.getHeight());
+										repaint(lastSure.x, lastSure.y, mousePointer.getWidth(), mousePointer.getHeight());
+									}
 								}
 							}
 						}
@@ -585,7 +578,7 @@ class Curtain extends JFrame { //curtain
 	public void paint(Graphics g) {
 		if (drawArtificalMouseCursor&&moveBackCursor) {
 			super.paint(g);
-			g.drawImage(mousePointer, lastUnsure.x, lastUnsure.y, null);
+			g.drawImage(mousePointer, lastSure.x, lastSure.y, null);
 		} else if (!isDone) {
 			super.paint(g);
 		}
