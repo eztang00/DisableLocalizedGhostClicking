@@ -147,6 +147,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		partClickable.toFront();
 	}
 	static long timeout;
+	static boolean[] step3Start = {false};
 	static void step2() {
 		JOptionPane.showMessageDialog(null, "Click or tap the regions on the screen you want to disable.");
 		blockingBackground.setBackground(new Color(0,0,0,1));
@@ -178,8 +179,14 @@ public class DisableLocalizedGhostClicking extends JFrame {
 						
 						case KeyEvent.VK_ENTER:
 							dispose();
+							synchronized (step3Start) {
+								if (!step3Start[0]) {
+									return;
+								}
+								step3Start[0] = true;
+							}
 							step3(im);
-							break;
+							return;
 						case KeyEvent.VK_MINUS:
 							r--;
 							break;
@@ -223,15 +230,21 @@ public class DisableLocalizedGhostClicking extends JFrame {
 							System.exit(0);
 						}
 					} else {
+						synchronized (step3Start) {
+							if (!step3Start[0]) {
+								return;
+							}
+							step3Start[0] = true;
+						}
 						regionFinder.dispose();
 						step3(im);
-						break;
+						return;
 					}
 				}
 			}
 		}.start();
 	}
-	static void step3(final BufferedImage im) {
+	static synchronized void step3(final BufferedImage im) {
 		Curtain c = new Curtain(im);
 		c.setVisible(true);
 		blockingBackground.dispose();
