@@ -17,7 +17,7 @@ To run it:
 
 -either
 
----run run.bat
+---run "run.bat"
 
   or
 
