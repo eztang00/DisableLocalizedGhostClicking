@@ -295,6 +295,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		mainPane.add(lbl2);
 		
 		final JCheckBox chckbxConstantlyEnsureOn = new JCheckBox("constantly ensure on front of special windows e.g. taskbar");
+		chckbxConstantlyEnsureOn.setSelected(c.constantToFront);
 		chckbxConstantlyEnsureOn.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -307,6 +308,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		if (c.robot==null) {
 			chckbxTryMoveMouse.setEnabled(false);
 		}
+		chckbxTryMoveMouse.setSelected(c.moveBackCursor);
 		chckbxTryMoveMouse.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -319,6 +321,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		if (c.robot==null) {
 			chckbxAllowMouseOr.setEnabled(false);
 		}
+		chckbxAllowMouseOr.setSelected(c.allowMouseTouchpad);
 		chckbxAllowMouseOr.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -407,8 +410,8 @@ class Curtain extends JFrame { //curtain
 	static final long FPS = 50;
 	volatile int min=100;
 	volatile int max=125;
-	volatile boolean constantToFront= false;
-	volatile boolean moveBackCursor= false;
+	volatile boolean constantToFront= true;
+	volatile boolean moveBackCursor= true;
 	volatile boolean allowMouseTouchpad= false;
 	volatile boolean isDone;
 	/**
@@ -419,6 +422,8 @@ class Curtain extends JFrame { //curtain
 			robot = new Robot();
 		} catch (Exception e1) {
 			//no robot
+			moveBackCursor = false;
+			allowMouseTouchpad= false;
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0,0,im.getWidth(),im.getHeight());
@@ -427,9 +432,6 @@ class Curtain extends JFrame { //curtain
 		setBackground(new Color(0, 0, 0, 0));
 		setFocusableWindowState(false);
 		setAlwaysOnTop(true);
-		if (robot==null) {
-			return;
-		}
 		addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
