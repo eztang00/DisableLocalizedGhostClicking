@@ -151,13 +151,14 @@ public class DisableLocalizedGhostClicking extends JFrame {
 	static long timeout;
 	static void step2() {
 		JOptionPane.showMessageDialog(null, "Click or tap the regions on the screen you want to disable.");
-
+		blockingBackground.setBackground(new Color(0,0,0,1));
 		final BufferedImage im = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
 		final JFrame regionFinder = new JFrame() {
 			int r = 10;
 			{
 				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				setUndecorated(true);
+				setBackground(new Color(0, 0, 0, 128+63));
 				setSize(screen);
 				MouseAdapter m = new MouseAdapter() {
 					public void mousePressed(MouseEvent e) {
@@ -203,8 +204,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				});
 			}
 			public void paint(Graphics g) {
-				g.setColor(Color.BLACK);
-				g.fillRect(0, 0, screen.width, screen.height);
+				super.paint(g);
 				g.drawImage(im, 0, 0, null);
 				g.setColor(Color.YELLOW);
 				g.setXORMode(Color.RED);
