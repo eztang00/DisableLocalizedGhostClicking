@@ -525,7 +525,7 @@ class Curtain extends JFrame { //curtain
 				try {
 					while (true) {
 						Thread.sleep(FPS);
-						if (getExtendedState() == Frame.ICONIFIED) {
+						if (getExtendedState() != Frame.NORMAL) {
 							setExtendedState(Frame.NORMAL);
 						}
 						if (constantToFront) {
