@@ -303,6 +303,8 @@ public class DisableLocalizedGhostClicking extends JFrame {
 			}
 		});
 		mainPane.add(chckbxConstantlyEnsureOn);
+
+		final JCheckBox chckbxDrawArtificial = new JCheckBox("draw artifical cursor (may accidentally block clicks)");
 		
 		final JCheckBox chckbxTryMoveMouse = new JCheckBox("try move mouse cursor back where it was before ghost click");
 		if (c.robot==null) {
@@ -313,9 +315,22 @@ public class DisableLocalizedGhostClicking extends JFrame {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				c.moveBackCursor = chckbxTryMoveMouse.isSelected();
+				chckbxDrawArtificial.setEnabled(c.moveBackCursor);
+				c.repaint();
 			}
 		});
 		mainPane.add(chckbxTryMoveMouse);
+
+		chckbxDrawArtificial.setEnabled(c.moveBackCursor);
+		chckbxDrawArtificial.setSelected(c.drawArtificalMouseCursor);
+		chckbxDrawArtificial.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				c.drawArtificalMouseCursor = chckbxDrawArtificial.isSelected();
+				c.repaint();
+			}
+		});
+		mainPane.add(chckbxDrawArtificial);
 		
 		final JCheckBox chckbxAllowMouseOr = new JCheckBox("allow mouse or touchpad (not touchscreen) to click in region");
 		if (c.robot==null) {
@@ -373,7 +388,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				dispose();
 				c.setVisible(false);
 				c.setVisible(true);
-				JOptionPane.showMessageDialog(null, "One more thing: not every phantom click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nIt maybe caused by checking \"allow mouse or touchpad (not touchscreen) to click in region\"\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
+				JOptionPane.showMessageDialog(null, "One more thing: not every phantom click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nSome ghost clicks may be caused by \"allow mouse or touchpad (not touchscreen) to click in region\"\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
 			}
 		});
 		mainPane.add(btnDone);
@@ -412,6 +427,7 @@ class Curtain extends JFrame { //curtain
 	volatile int max=125;
 	volatile boolean constantToFront= true;
 	volatile boolean moveBackCursor= true;
+	volatile boolean drawArtificalMouseCursor= false;
 	volatile boolean allowMouseTouchpad= false;
 	volatile boolean isDone;
 	/**
@@ -445,14 +461,26 @@ class Curtain extends JFrame { //curtain
 					}
 					return;
 				}
-				long l = System.currentTimeMillis()-mousePressedTime;
+				long l = e.getWhen()-mousePressedTime;
 				Point p = e.getLocationOnScreen();
-				if (l >= min && l <=max && lastUnsure.distanceSq(lastUnsure=p) < RADIUS*RADIUS) {
-					lastSure = p;
-					setVisible(false);
-					robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-					robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-					setVisible(true);
+				if (l >= min && l <=max) {
+					if (lastUnsure.distanceSq(p) < RADIUS*RADIUS) {
+						lastSure = p;
+						setVisible(false);
+						robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+						robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+						setVisible(true);
+					} else {
+						if (moveBackCursor) {
+							robot.mouseMove(lastSure.x, lastSure.y);
+						}
+					}
+					if (drawArtificalMouseCursor&&moveBackCursor) {
+						Point prevLastUnsure = lastUnsure;
+						lastUnsure = p;
+						repaint(prevLastUnsure.x, prevLastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
+						repaint(lastUnsure.x, lastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
+					}
 				} else {
 					if (moveBackCursor) {
 						robot.mouseMove(lastSure.x, lastSure.y);
@@ -462,7 +490,7 @@ class Curtain extends JFrame { //curtain
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				mousePressedTime = System.currentTimeMillis();
+				mousePressedTime = e.getWhen();
 				mousePressed = true;
 			}
 
@@ -497,9 +525,14 @@ class Curtain extends JFrame { //curtain
 								robot.mouseMove(lastSure.x, lastSure.y);
 								mousePressed = false;
 							} else {
+								Point prevLastUnsure = lastUnsure;
 								lastUnsure = MouseInfo.getPointerInfo().getLocation();
 								if (Curtain.this.im.getRGB(lastUnsure.x, lastUnsure.y)==0x00000000 || lastUnsure.distanceSq(lastSure) < RADIUS*RADIUS) {
 									lastSure = lastUnsure;
+								}
+								if (drawArtificalMouseCursor&&moveBackCursor) {
+									repaint(prevLastUnsure.x, prevLastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
+									repaint(lastUnsure.x, lastUnsure.y, mousePointer.getWidth(), mousePointer.getHeight());
 								}
 							}
 						}
@@ -513,7 +546,47 @@ class Curtain extends JFrame { //curtain
 			}
 		}.start();
 	}
+	BufferedImage mousePointer = new BufferedImage(12, 21, BufferedImage.TYPE_INT_ARGB) {{
+		setRGB(0, 0, 12, 21, replaceAll(replaceAll(replaceAll(new int[] {
+				1,1,1,1,1,1,1,1,1,1,1,1,
+				8,8,1,1,1,1,1,1,1,1,1,1,
+				8,7,8,1,1,1,1,1,1,1,1,1,
+				8,7,7,8,1,1,1,1,1,1,1,1,
+				8,7,7,7,8,1,1,1,1,1,1,1,
+				8,7,7,7,7,8,1,1,1,1,1,1,
+				8,7,7,7,7,7,8,1,1,1,1,1,
+				8,7,7,7,7,7,7,8,1,1,1,1,
+				8,7,7,7,7,7,7,7,8,1,1,1,
+				8,7,7,7,7,7,7,7,7,8,1,1,
+				8,7,7,7,7,7,7,7,7,7,8,1,
+				8,7,7,7,7,7,7,8,8,8,8,8,
+				8,7,7,7,8,7,7,8,1,1,1,1,
+				8,7,7,8,8,7,7,8,1,1,1,1,
+				8,7,8,1,1,8,7,7,8,1,1,1,
+				8,8,1,1,1,8,7,7,8,1,1,1,
+				8,1,1,1,1,1,8,7,7,8,1,1,
+				1,1,1,1,1,1,8,7,7,8,1,1,
+				1,1,1,1,1,1,1,8,7,7,8,1,
+				1,1,1,1,1,1,1,8,7,7,8,1,
+				1,1,1,1,1,1,1,1,8,8,1,1,
+		}, 8, 0xFF000000), 7, 0xFFF0F0F0), 1, 0x00000000), 0, 12);
+	}};
+	static int[] replaceAll(int[] array, int from, int to) {
+		array = array.clone();
+		for (int i=0; i<array.length; i++) {
+			if (array[i] == from) {
+				array[i] = to;
+			}
+		}
+		return array;
+	}
 	public void paint(Graphics g) {
+		if (drawArtificalMouseCursor&&moveBackCursor) {
+			super.paint(g);
+			g.drawImage(mousePointer, lastUnsure.x, lastUnsure.y, null);
+		} else if (!isDone) {
+			super.paint(g);
+		}
 		g.drawImage(im, 0, 0, null);
 	}
 }
