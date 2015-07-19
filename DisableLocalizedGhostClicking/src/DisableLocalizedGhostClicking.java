@@ -386,7 +386,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				dispose();
 				c.setVisible(false);
 				c.setVisible(true);
-				JOptionPane.showMessageDialog(null, "One more thing: not every ghost click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nIf you still get ghost clicks, probably your area is too small.\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
+				JOptionPane.showMessageDialog(null, "One more thing: not every ghost click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nIf you still get ghost clicks, probably your area is too small,\nor the program exited on its own.\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
 			}
 		});
 		mainPane.add(btnDone);
