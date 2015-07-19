@@ -1,12 +1,16 @@
+# Read below first:
 # DisableLocalizedGhostClicking
 Meant for people using touchscreens which click on their own (due to glitches or broken screen), but only on certain regions of the screen.
+
+
+My guess is it only works on Windows.
 
 
 To download from github:
 
 -go to the page with this README file (you might be already on the right page)
 
--click "Download ZIP" (on the bottom right?)
+-click "Download ZIP" (look to the right?)
 
 
 To run it:
