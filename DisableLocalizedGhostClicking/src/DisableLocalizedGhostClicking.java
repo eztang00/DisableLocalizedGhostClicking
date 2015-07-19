@@ -525,8 +525,11 @@ class Curtain extends JFrame { //curtain
 				try {
 					while (true) {
 						Thread.sleep(FPS);
+						if (getExtendedState() == Frame.ICONIFIED) {
+							setExtendedState(Frame.NORMAL);
+						}
 						if (constantToFront) {
-							Curtain.this.toFront();
+							toFront();
 						}
 						if (moveBackCursor) {
 							if (mousePressed && System.currentTimeMillis()-mousePressedTime >= 150) { //for ghost dragging
