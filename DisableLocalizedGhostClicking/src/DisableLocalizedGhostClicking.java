@@ -203,8 +203,8 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				g.drawImage(im, 0, 0, null);
 				g.setColor(Color.YELLOW);
 				g.setXORMode(Color.RED);
-				g.drawString("Press enter when done. Or wait 5 minutes.", screen.width/3, screen.height/3);
-				g.drawString("If dots too big press \"-\" to decrease. Pressing delete clears screen. If short on time, press backspace to reset 5 min.", screen.width/3, screen.height/3+50);
+				g.drawString("Click where you want to disable. Press enter when done. Or wait 5 minutes.", screen.width/4, screen.height/3);
+				g.drawString("If dots too big press \"-\" to decrease. Pressing delete clears screen. If short on time, press backspace to reset 5 min.", screen.width/4, screen.height/3+50);
 			}
 		};
 		regionFinder.setVisible(true);
