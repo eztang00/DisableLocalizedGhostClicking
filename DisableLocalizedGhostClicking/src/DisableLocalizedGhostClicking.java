@@ -1,7 +1,6 @@
 
 
 import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -14,7 +13,6 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -26,15 +24,21 @@ import java.awt.image.BufferedImage;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+/*
+ * where I mentioned it:
+ * http://qnundrum.com/question/1368516
+ * http://answers.microsoft.com/en-us/windows/forum/windows_8-tms/ghost-touches-on-touchscreen-samsung-laptop-np/0dc17394-ed88-4f43-ba1f-fa7542ef7f1e?page=2
+ * https://youtu.be/D7nBiNtaTJk
+ * https://www.youtube.com/watch?v=sc4PplE4RhA
+ */
 
 /**
  * public domain
@@ -189,6 +193,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 							g.setComposite(AlphaComposite.Clear);
 							g.fillRect(0, 0, screen.width, screen.height);
 							g.dispose();
+							repaint();
 							break;
 						case KeyEvent.VK_BACK_SPACE:
 							timeout = System.currentTimeMillis()+5*60*1000;
@@ -363,6 +368,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				g.fillRect(0, 0, screen.width, screen.height);
 				g.dispose();
 				dispose();
+				c.repaint();
 			}
 		});
 		mainPane.add(btnDone);
