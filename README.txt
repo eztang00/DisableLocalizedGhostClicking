@@ -10,7 +10,7 @@ To run it:
 -make sure you have java installed
 -uncompress the zip file
 -either
-  -run run.bat
+  -run "run.bat"
 or
   -use command prompt to:
   -compile the source code "javac DisableLocalizedGhostClicking/src/DisableLocalizedGhostClicking.java"
