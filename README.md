@@ -17,7 +17,7 @@ To run it:
 
 -either
 
----run DisableLocalizedGhostClicking/bin/run.bat
+---run run.bat
 
   or
 
