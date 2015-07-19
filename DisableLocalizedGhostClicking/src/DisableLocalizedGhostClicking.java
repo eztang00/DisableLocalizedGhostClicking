@@ -324,7 +324,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		});
 		mainPane.add(chckbxAllowMouseOr);
 		
-		JLabel lblDelayRangeTo = new JLabel("<html>Some touchpads have a very consistent click duration to distinguish their clicks.<br />Click duration to detect mouse or touchpad:</html>");
+		JLabel lblDelayRangeTo = new JLabel("<html>Some touchpads have a very consistent click duration to distinguish their clicks.<br />Click durations to allow in region:</html>");
 		mainPane.add(lblDelayRangeTo);
 		
 		JLabel lblMinAllowedClick = new JLabel("min allowed click duration");
