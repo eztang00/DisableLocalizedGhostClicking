@@ -17,14 +17,14 @@ To run it:
 
 -either
 
-  -run DisableLocalizedGhostClicking/bin/run.bat
+---run DisableLocalizedGhostClicking/bin/run.bat
 
   or
 
-  -use command prompt to:
+---use command prompt to:
 
-  -compile the source code "javac DisableLocalizedGhostClicking/src/DisableLocalizedGhostClicking.java"
+---compile the source code "javac DisableLocalizedGhostClicking/src/DisableLocalizedGhostClicking.java"
 
-  -run it "java DisableLocalizedGhostClicking"
+---run it "java DisableLocalizedGhostClicking"
 
 I prefer the 2nd option because your computer might not allow the 1st.
