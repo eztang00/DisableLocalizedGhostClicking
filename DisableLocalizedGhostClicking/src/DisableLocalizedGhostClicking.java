@@ -153,7 +153,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		blockingBackground.setBackground(new Color(0,0,0,1));
 		final BufferedImage im = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
 		final JFrame regionFinder = new JFrame() {
-			int r = 10;
+			int r = 50;
 			{
 				setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				setUndecorated(true);
@@ -180,7 +180,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 						case KeyEvent.VK_ENTER:
 							dispose();
 							synchronized (step3Start) {
-								if (!step3Start[0]) {
+								if (step3Start[0]) {
 									return;
 								}
 								step3Start[0] = true;
@@ -231,7 +231,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 						}
 					} else {
 						synchronized (step3Start) {
-							if (!step3Start[0]) {
+							if (step3Start[0]) {
 								return;
 							}
 							step3Start[0] = true;
