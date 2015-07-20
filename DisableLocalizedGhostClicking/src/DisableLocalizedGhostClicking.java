@@ -13,6 +13,8 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -452,7 +454,7 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				dispose();
 				c.setVisible(false);
 				c.setVisible(true);
-				JOptionPane.showMessageDialog(null, "One more thing: not every ghost click is caught, and some may \"pass through.\"\nIt seems to be the right clicks which pass through.\nTo disable touchscreen right clicks in Windows 8,\npress the windows key and then type \"pen and touch\" and then click.\nSelect \"Press and hold\" press \"Settings\" and uncheck the box.\nIf you still get ghost clicks, probably your area is too small,\nor the program exited on its own.\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.");
+				JOptionPane.showMessageDialog(null, "One more thing: if your area is too small, not every ghost click is caught,\nand some may \"pass through,\" especially when moving your cursor.\nSometimes pressing Ctrl+Alt+Delete fixes it for a second.\nOther issues: sometimes the program exits on its own.\nSometimes the ghost clicking does a ghost zoom, which deselects any window you're on.");
 			}
 		});
 		mainPane.add(btnDone);
