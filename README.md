@@ -5,7 +5,6 @@ Meant for people using touchscreens which click on their own (due to glitches or
 
 My guess is it only works on Windows.
 
-#note: recently it's not working right and freezes computer
 To download from github:
 
 -go to the page with this README file (you might be already on the right page)
