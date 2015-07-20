@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JSplitPane;
 
 /*
  * where I mentioned it:
@@ -245,6 +246,11 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		}.start();
 	}
 	static synchronized void step3(final BufferedImage im) {
+		Graphics2D g = (Graphics2D) im.getGraphics();
+		g.setComposite(AlphaComposite.SrcIn);
+		g.setColor(new Color(255, 255, 0, 0x55));
+		g.fillRect(0, 0, screen.width, screen.height);
+		g.dispose();
 		Curtain c = new Curtain(im);
 		c.setVisible(true);
 		blockingBackground.dispose();
@@ -253,8 +259,10 @@ public class DisableLocalizedGhostClicking extends JFrame {
 	
 	
 	private JPanel mainPane;
-	private JSpinner min;
-	private JSpinner max;
+	private JSpinner minL;
+	private JSpinner maxL;
+	private JSpinner minR;
+	private JSpinner maxR;
 	/**
 	 * Create the frame.
 	 */
@@ -352,8 +360,10 @@ public class DisableLocalizedGhostClicking extends JFrame {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				c.allowMouseTouchpad = chckbxAllowMouseOr.isSelected();
-				min.setEnabled(c.allowMouseTouchpad);
-				max.setEnabled(c.allowMouseTouchpad);
+				minL.setEnabled(c.allowMouseTouchpad);
+				minR.setEnabled(c.allowMouseTouchpad);
+				maxL.setEnabled(c.allowMouseTouchpad);
+				maxR.setEnabled(c.allowMouseTouchpad);
 			}
 		});
 		mainPane.add(chckbxAllowMouseOr);
@@ -361,39 +371,82 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		JLabel lblDelayRangeTo = new JLabel("<html>Some touchpads have a very consistent click duration to distinguish their clicks.<br />Click durations to allow in region:</html>");
 		mainPane.add(lblDelayRangeTo);
 		
-		JLabel lblMinAllowedClick = new JLabel("min allowed click duration");
-		mainPane.add(lblMinAllowedClick);
+		JSplitPane splitPane_3 = new JSplitPane();
+		splitPane_3.setResizeWeight(0.5);
+		mainPane.add(splitPane_3);
 		
-		min = new JSpinner();
-		min.setEnabled(false);
-		min.setValue(c.min);
-		min.addChangeListener(new ChangeListener() {
+		JLabel lblMinAllowedClick = new JLabel("min allowed left click duration");
+		splitPane_3.setLeftComponent(lblMinAllowedClick);
+		
+		JLabel lblMinAllowedRight = new JLabel("min allowed right click duration");
+		splitPane_3.setRightComponent(lblMinAllowedRight);
+		
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.5);
+		mainPane.add(splitPane);
+		
+		minL = new JSpinner();
+		minL.setEnabled(false);
+		minL.setValue(c.minL);
+		minL.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				c.min = (int) min.getValue();
+				c.minL = (int) minL.getValue();
 			}
 		});
-		mainPane.add(min);
+		splitPane.setLeftComponent(minL);
 		
-		JLabel lblMaxAllowedClick = new JLabel("max allowed click duration");
-		mainPane.add(lblMaxAllowedClick);
-		
-		max = new JSpinner();
-		max.setEnabled(false);
-		max.setValue(c.max);
-		max.addChangeListener(new ChangeListener() {
+		minR = new JSpinner();
+		minR.setEnabled(false);
+		minR.setValue(c.minR);
+		minR.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				c.max = (int) max.getValue();
+				c.minR = (int) minR.getValue();
 			}
 		});
-		mainPane.add(max);
+		splitPane.setRightComponent(minR);
+		
+		JSplitPane splitPane_1 = new JSplitPane();
+		splitPane_1.setResizeWeight(0.5);
+		mainPane.add(splitPane_1);
+		
+		JLabel lblMaxAllowedClick = new JLabel("max allowed left click duration");
+		splitPane_1.setLeftComponent(lblMaxAllowedClick);
+		
+		JLabel lblMaxAllowedRight = new JLabel("max allowed right click duration");
+		splitPane_1.setRightComponent(lblMaxAllowedRight);
+		
+		JSplitPane splitPane_2 = new JSplitPane();
+		splitPane_2.setResizeWeight(0.5);
+		mainPane.add(splitPane_2);
+		
+		maxL = new JSpinner();
+		maxL.setEnabled(false);
+		maxL.setValue(c.maxL);
+		maxL.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				c.maxL = (int) maxL.getValue();
+			}
+		});
+		splitPane_2.setLeftComponent(maxL);
+		
+		maxR = new JSpinner();
+		maxR.setEnabled(false);
+		maxR.setValue(c.maxR);
+		maxR.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				c.maxR = (int) maxR.getValue();
+			}
+		});
+		splitPane_2.setRightComponent(maxR);
+
 		mainPane.add(btnClickHereTo);
 		
 		JButton btnDone = new JButton(new AbstractAction("Done") {
 			public void actionPerformed(ActionEvent e) {
 				c.isDone = true;
 				Graphics2D g = (Graphics2D) c.im.getGraphics();
-				g.setComposite(AlphaComposite.SrcIn);
-				g.setColor(new Color(255, 255, 255, 1));
+				g.setComposite(AlphaComposite.SrcIn); //alpha multiply 0x03/0xFF with 0x55/0xFF = 0x01/0xFF
+				g.setColor(new Color(255, 255, 255, 3));
 				g.fillRect(0, 0, screen.width, screen.height);
 				g.dispose();
 				dispose();
@@ -435,8 +488,10 @@ class Curtain extends JFrame { //curtain
 	BufferedImage im;
 	static final int RADIUS = 50;
 	static final long FPS = 50;
-	volatile int min=100;
-	volatile int max=125;
+	volatile int minL=100;
+	volatile int maxL=125;
+	volatile int minR=100;
+	volatile int maxR=125;
 	volatile boolean constantToFront= true;
 	volatile boolean moveBackCursor= true;
 	volatile boolean drawArtificalMouseCursor= false;
@@ -475,12 +530,22 @@ class Curtain extends JFrame { //curtain
 				}
 				long l = e.getWhen()-mousePressedTime;
 				Point p = e.getLocationOnScreen();
+				int min, max, buttonMask;
+				if (e.getButton()==MouseEvent.BUTTON1) {
+					buttonMask = InputEvent.BUTTON1_DOWN_MASK;
+					min = minL;
+					max = maxL;
+				} else {
+					buttonMask = e.getButton()==MouseEvent.BUTTON2 ? InputEvent.BUTTON2_DOWN_MASK : InputEvent.BUTTON3_DOWN_MASK;
+					min = minR;
+					max = maxR;
+				}
 				if (l >= min && l <=max && e.getLocationOnScreen().equals(wherePressed)) {
 					if (lastUnsure.distanceSq(p) < RADIUS*RADIUS) {
 						lastSure = p;
 						setVisible(false);
-						robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-						robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+						robot.mousePress(buttonMask);
+						robot.mouseRelease(buttonMask);
 						setVisible(true);
 					} else {
 						if (moveBackCursor) {
