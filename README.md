@@ -1,6 +1,6 @@
 # Read below first:
 # DisableLocalizedGhostClicking
-Meant for people using touchscreens which click on their own (due to glitches or broken screen), but only on certain regions of the screen.
+Meant for people with touchscreens which click on their own (due to glitches or broken screen), but only in certain areas of the screen.
 
 
 My guess is it only works on Windows.
@@ -13,6 +13,8 @@ To download from github:
 
 
 To run it:
+
+-Important: please save your work and close programs such as text editors before running. The program may crash. 
 
 -make sure you have java installed
 
@@ -31,3 +33,5 @@ To run it:
 ---run it "java DisableLocalizedGhostClicking"
 
 I prefer the 2nd option because your computer might not allow the 1st.
+
+You can eztang00@gmail.com about any issues, especially cases where it crashes the computer.
