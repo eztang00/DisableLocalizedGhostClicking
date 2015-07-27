@@ -1,7 +1,7 @@
-Read below first:
-DisableLocalizedGhostClicking
-
+# Read below first:
+# DisableLocalizedGhostClicking
 Meant for people with touchscreens which click on their own (due to glitches or broken screen), but only in certain areas of the screen.
+
 
 My guess is it only works on Windows.
 
@@ -11,13 +11,16 @@ To download from github:
 
 -click "Download ZIP" (look to the right?)
 
+-find the "DisableLocalizedGhostClicking.zip" file, and uncompress it. (On Windows, right click and select "Extract All...") There now should be a folder named "DisableLocalizedGhostClicking".
+
+-delete the "DisableLocalizedGhostClicking.zip" file
+
+
 To run it:
 
--Important: please save your work and close programs such as text editors before running. The program may crash your computer.
+-Important: please save your work and close programs such as text editors before running. The program may crash your computer. 
 
--make sure you have java installed
-
--uncompress the zip file
+-make sure you have java installed (one place to install: http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 -either
 
@@ -25,7 +28,7 @@ To run it:
 
 -----this may only work in Windows
 
-or
+  or
 
 ---open command prompt and enter the "bin" folder inside the "DisableLocalizedGhostClicking"
 
@@ -33,7 +36,7 @@ or
 
 -----"BlahBlah\Some Folder\Some Other Folder\Java\blah1.2.3_45\bin\javaw.exe" DisableLocalizedGhostClicking.java
 
-or
+  or
 
 ---open command prompt and enter the "src" folder inside the "DisableLocalizedGhostClicking"
 
