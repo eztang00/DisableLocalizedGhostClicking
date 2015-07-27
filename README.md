@@ -14,7 +14,7 @@ To download from github:
 
 To run it:
 
--Important: please save your work and close programs such as text editors before running. The program may crash. 
+-Important: please save your work and close programs such as text editors before running. The program may crash your computer. 
 
 -make sure you have java installed
 
@@ -22,16 +22,32 @@ To run it:
 
 -either
 
----run "run.bat"
+---run "run.bat" (and a popup should appear)
+
+-----this may only work in Windows
 
   or
 
----use command prompt to:
+---open command prompt and enter the "bin" folder inside the "DisableLocalizedGhostClicking"
 
----compile the source code "javac DisableLocalizedGhostClicking/src/DisableLocalizedGhostClicking.java"
+---once in that folder, run "javaw DisableLocalizedGhostClicking". If javac is not found, you may type
 
----run it "java DisableLocalizedGhostClicking"
+-----"BlahBlah\Some Folder\Some Other Folder\Java\blah1.2.3_45\bin\javaw.exe" DisableLocalizedGhostClicking.java
 
-I prefer the 2nd option because your computer might not allow the 1st.
+  or
+
+---open command prompt and enter the "src" folder inside the "DisableLocalizedGhostClicking"
+
+---once in that folder, run "javac DisableLocalizedGhostClicking.java". If javac is not found, you may type
+
+-----"BlahBlah\Some Folder\Some Other Folder\Java\jdk1.2.3_45\bin\javac.exe" DisableLocalizedGhostClicking.java
+
+-----If you can't find any file named "javac.exe", download a jdk http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+-----Whether you use "\" or "/" depends on your operating system
+
+---run "javaw DisableLocalizedGhostClicking"
+
+I prefer the 3nd option because your computer might not allow the 1st or 2nd.
 
 You can eztang00@gmail.com about any issues, especially cases where it crashes the computer.
