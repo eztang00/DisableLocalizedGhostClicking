@@ -11,14 +11,16 @@ To download from github:
 
 -click "Download ZIP" (look to the right?)
 
+-find the "DisableLocalizedGhostClicking.zip" file, and uncompress it. (On Windows, right click and select "Extract All...") There now should be a folder named "DisableLocalizedGhostClicking".
+
+-delete the "DisableLocalizedGhostClicking.zip" file
+
 
 To run it:
 
 -Important: please save your work and close programs such as text editors before running. The program may crash your computer. 
 
--make sure you have java installed
-
--uncompress the zip file
+-make sure you have java installed (one place to install: http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 -either
 
