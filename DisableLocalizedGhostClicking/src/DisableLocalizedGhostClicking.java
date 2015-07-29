@@ -273,13 +273,13 @@ public class DisableLocalizedGhostClicking extends JFrame {
 		mainPane = new JPanel();
 		getContentPane().add(mainPane);
 		
-		final JButton btnClickHereTo = new JButton("Click/tap here to measure your click/tap duration");
+		final JButton btnClickHereTo = new JButton("Click here to compare your click durations with your touchscreen durations.");
 		btnClickHereTo.addMouseListener(new MouseListener() {
 			long t = 0;
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
-				btnClickHereTo.setText(""+(e.getWhen()-t));
+				btnClickHereTo.setText("" + (e.getWhen()-t) + (e.getButton()==MouseEvent.BUTTON1 ? "" : e.getButton()==MouseEvent.BUTTON2 ? "r" : "R"));
 				
 			}
 			
