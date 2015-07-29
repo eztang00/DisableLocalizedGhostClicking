@@ -13,8 +13,6 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -31,9 +29,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.JSplitPane;
 
 /*
  * where I mentioned it:
@@ -41,6 +39,8 @@ import javax.swing.JSplitPane;
  * http://answers.microsoft.com/en-us/windows/forum/windows_8-tms/ghost-touches-on-touchscreen-samsung-laptop-np/0dc17394-ed88-4f43-ba1f-fa7542ef7f1e?page=2
  * https://youtu.be/D7nBiNtaTJk
  * https://www.youtube.com/watch?v=sc4PplE4RhA
+ * https://youtu.be/O2tVT9dDnzE
+ * https://youtu.be/5PR7N7F19ew
  */
 
 /**
@@ -502,7 +502,7 @@ class Curtain extends JFrame { //curtain
 	/**
 	 * Create the frame.
 	 */
-	public Curtain(BufferedImage im) {
+	public Curtain(final BufferedImage im) {
 		try {
 			robot = new Robot();
 		} catch (Exception e1) {
@@ -542,12 +542,17 @@ class Curtain extends JFrame { //curtain
 					min = minR;
 					max = maxR;
 				}
-				if (l >= min && l <=max && e.getLocationOnScreen().equals(wherePressed)) {
+				if (l >= min && l <=max && p.equals(wherePressed)) {
 					if (lastUnsure.distanceSq(p) < RADIUS*RADIUS) {
 						lastSure = p;
-						setVisible(false);
+						im.setRGB(p.x, p.y, 0x00000000);
+//						pan.paintImmediately(p.x, p.y, 1, 1);
+						Curtain.this.setBackground(new Color(0, 0, 0, 0));
 						robot.mousePress(buttonMask);
 						robot.mouseRelease(buttonMask);
+						im.setRGB(p.x, p.y, 0x01FFFFFF);
+//						pan.paintImmediately(p.x, p.y, 1, 1);
+						Curtain.this.setBackground(new Color(0, 0, 0, 0));
 						setVisible(true);
 					} else {
 						if (moveBackCursor) {
@@ -624,6 +629,15 @@ class Curtain extends JFrame { //curtain
 			}
 		}.start();
 	}
+	public void paint(Graphics g) {
+		if (drawArtificalMouseCursor&&moveBackCursor) {
+			super.paint(g);
+			g.drawImage(mousePointer, lastSure.x, lastSure.y, null);
+		} else if (!isDone) {
+			super.paint(g);
+		}
+		g.drawImage(im, 0, 0, null);
+	}
 	BufferedImage mousePointer = new BufferedImage(12, 21, BufferedImage.TYPE_INT_ARGB) {{
 		setRGB(0, 0, 12, 21, replaceAll(replaceAll(replaceAll(new int[] {
 				1,1,1,1,1,1,1,1,1,1,1,1,
@@ -657,14 +671,5 @@ class Curtain extends JFrame { //curtain
 			}
 		}
 		return array;
-	}
-	public void paint(Graphics g) {
-		if (drawArtificalMouseCursor&&moveBackCursor) {
-			super.paint(g);
-			g.drawImage(mousePointer, lastSure.x, lastSure.y, null);
-		} else if (!isDone) {
-			super.paint(g);
-		}
-		g.drawImage(im, 0, 0, null);
 	}
 }
