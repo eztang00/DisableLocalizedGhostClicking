@@ -449,7 +449,6 @@ public class DisableLocalizedGhostClicking extends JFrame {
 				Graphics2D g = (Graphics2D) c.im.getGraphics();
 				g.setComposite(AlphaComposite.SrcIn); //alpha multiply 0x03/0xFF with 0x55/0xFF = 0x01/0xFF
 				g.setColor(new Color(255, 255, 255, 3));
-	g.setColor(Color.RED);
 				g.fillRect(0, 0, screen.width, screen.height);
 				g.dispose();
 				dispose();
@@ -631,9 +630,11 @@ class Curtain extends JFrame { //curtain
 		}.start();
 	}
 	public void paint(Graphics g) {
-		super.paint(g);
 		if (drawArtificalMouseCursor&&moveBackCursor) {
+			super.paint(g);
 			g.drawImage(mousePointer, lastSure.x, lastSure.y, null);
+		} else if (!isDone) {
+			super.paint(g);
 		}
 		g.drawImage(im, 0, 0, null);
 	}
