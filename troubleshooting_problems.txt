@@ -16,6 +16,8 @@ Q: The mouse keeps moving to the disabled area. What to do?
 A:
 -Make sure the 2nd checkbox is checked. It says "try move mouse cursor back where it was before ghost click"
 -Make sure your area is large enough. Occasionally when you move the mouse, the ghost click also moves a bit, and escapes the area.
+-Unfortunately, it may still happen from time to time. Try repeatedly moving the cursor away until it's out.
+-Try checking "draw artifical cursor" to see where the cursor really is.
 
 Q: The area is too big and interferes with computer use. What to do?
 A: If the area blocks some important buttons, check "allow mouse or touchpad to click in region" and set a minimum or maximum click duration (e.g. minimum 10ms, maximum 500ms if your mouse varies a lot). Ghost touches might be consistently 1ms.
