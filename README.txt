@@ -2,6 +2,7 @@
 # DisableLocalizedGhostClicking
 Meant for people with touchscreens which click on their own (due to glitches or broken screen), but only in certain areas of the screen.
 
+Sorry, I'm starting to think this program isn't very useful. The ghost clicks will still deselect the right click menu, making normal computer use difficult. I recommend calling your computer's sellers and asking if you have warranty to fix your screen. Maybe they can do it for free, but only within a few years of buying your computer.
 
 My guess is it only works on Windows.
 
