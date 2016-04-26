@@ -1,0 +1,26 @@
+Q: My question is not on this page. What to do?
+A: Contact eztang00@gmail.com
+
+Q: I can't close the program. What to do?
+A:
+-If there is a white Java icon on the taskbar (on the bottom of the screen), right click it and click close.
+-Or on Windows, open the Task Manager (press Ctrl, Shift, and Escape at once), find "Java(TM) Platform binary" or "javaw.exe", select it and click "End task".
+
+Q: The ghost clicks still deselects my right click menu. What to do?
+A: I'm sorry, this is a big limitation of the program and can't be fixed.
+
+Q: Sometimes it deselects the window I'm on. What to do?
+A: It occurs when the ghost clicks perform a ghost zoom. Sorry I haven't been able to fix this although in theory it's possible.
+
+Q: The mouse keeps moving to the disabled area. What to do?
+A:
+-Make sure the 2nd checkbox is checked. It says "try move mouse cursor back where it was before ghost click"
+-Make sure your area is large enough. Occasionally when you move the mouse, the ghost click also moves a bit, and escapes the area.
+
+Q: The area is too big and interferes with computer use. What to do?
+A: If the area blocks some important buttons, check "allow mouse or touchpad to click in region" and set a minimum or maximum click duration (e.g. minimum 10ms, maximum 500ms if your mouse varies a lot). Ghost touches might be consistently 1ms.
+
+Q: The ghost clicks still click on some menus and the taskbar. What to do?
+A:
+-Make sure the 1st checkbox is checked. It says "constantly ensure on front of special windows e.g. taskbar"
+-Sometimes it can't be fixed.
